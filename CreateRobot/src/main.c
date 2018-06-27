@@ -39,8 +39,8 @@ int main() {
     turn_pause_on();     // Use this for TUNING and practice.
 
     // Do the light calibration:
-    //printf("Do the   wait_for_lights   steps...\n");
-    //wait_for_light(LEGO_LIGHT_SENSOR);
+    printf("Do the   wait_for_lights   steps...\n");
+    wait_for_light(LIGHT_SENSOR);
 
     // The rest happens when the lights come back on.
     printf("  Robot has STARTED!\n\n");
@@ -67,41 +67,53 @@ void setup_create()
     printf("  Connected!\n\n");
     
     // Initial positions of all ports:
-    /*set_servo_position(0, PORT0_START);
+    set_servo_position(0, PORT0_START);
     set_servo_position(1, PORT1_START);
     set_servo_position(2, PORT2_START);
-    set_servo_position(3, PORT3_START);*/
+    set_servo_position(3, PORT3_START);
 
     enable_servo(0);
     enable_servo(1);
     enable_servo(2);
     enable_servo(3);
 
+    printf("Moving the servo to its start position...\n");
+    msleep(2000);
+    printf("Disabling the servo.\n");
+    disable_servo(0);
+    
+    pause();
     turn_pause_off();
 }
 
 void RUN_CREATE() {
     //run_create1();
     //run_create2();
-    servo(0, 791);
-    create_forward(17, 30);
-    create_right(26, 30);
-    create_forward(12, 30);
-    servo(0, 1660);
+    enable_servo(0);
+    servo(0, 65);
+   
+    create_forward(21, 30);
+    create_right(35, 28);  // was 30
+    create_forward(11, 30); // was 10
+    servo(0, 800);
     create_backward(5, 30);
-    servo(0, 791);
-    create_forward(5, 30);
-    servo(0, 1660);
-    create_backward(5, 30);
-    create_left(46, 30);
+    
+    servo(0, 65);
     create_forward(3, 30);
-    servo(0, 1660);
-    create_backward(6, 30);
-    servo(0, 791);
-    create_forward(6, 30);
-    servo(0, 1660);
-    create_backward(6, 30);
-    servo(0, 791);
+    servo(0, 800);
+    create_backward(5, 30);
+    
+    servo(0, 65);
+    create_forward(5, 30);
+    create_left(59, 30);
+    
+    servo(0, 800);
+    create_backward(5, 30);
+    servo(0, 65);
+    create_forward(5, 30);
+    servo(0, 800);
+    create_backward(5, 30);
+    servo(0, 65);
 }
 
 void choose_pause()
