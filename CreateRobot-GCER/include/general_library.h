@@ -33,6 +33,7 @@ void run_create1_or_create2();
 void pause();
 void turn_pause_on();
 void turn_pause_off();
+char* get_pause_state();
                     
 void servo(int port, int desired_position);
 int get_button_press(char* message);

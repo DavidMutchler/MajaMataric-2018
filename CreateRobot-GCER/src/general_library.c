@@ -58,7 +58,7 @@ void servo(int port, int desired_position)
 }
 
 // Waits for the user to press the A button, then continues.
-// But if the WAIT_FOR_A global variable is FALSE, then just sleeps for MILLISECONDS_TO_PAUSE.
+// But if the  WAIT_FOR_A  global variable is FALSE, then just sleeps for MILLISECONDS_TO_PAUSE.
 void pause()
 {
     if (WAIT_FOR_A == FALSE)
@@ -100,6 +100,14 @@ void turn_pause_off()
     WAIT_FOR_A = FALSE;
 }
 
+char* get_pause_state() {
+    if (WAIT_FOR_A) {
+        return "ON";
+    } else {
+        return "OFF";
+    }
+}
+
 int get_button_press(char* message)
 {
     int button;
@@ -128,7 +136,7 @@ int get_button_press(char* message)
     return button;
 }
 
-int detect_color_of_closest_cube()
+/*int detect_color_of_closest_cube()
 {
     int yellow_area, green_area, red_area;
 
@@ -172,7 +180,7 @@ int detect_color_of_closest_cube()
         printf("%4d %4d %4d\n", yellow_area, red_area, green_area);
         msleep(1000);
     }
-}
+} */
 
 //BEYOND THIS POINT: Functions either after Regionals and/or for GECR
 

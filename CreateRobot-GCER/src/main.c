@@ -1,6 +1,5 @@
 /*
-  Code for the CREATE robot in the SEEDING rounds
-  in the GECR competition, July, 2018.
+  Code for the CREATE robot in 2018 Botball.  Final version for GCER.
 
   Contains the MAIN function, which itself calls:
     -- setup_create
@@ -10,7 +9,7 @@
        ... Maybe "run_create3," etc.
 
   Authors include:  Delaney, Ben G, Ben W, Blaize, Caiden, Gavin, Elijah, Isaiah, Max, Ryland, and others.
-  Date written: Spring, 2018.
+  Date written: Spring and Summer, 2018.
 */
 
 #include <kipr/botball.h>
@@ -18,116 +17,81 @@
 #include "general_library.h"
 #include "create_library.h"
 
-// TODO: Put the functions below in a more sensable place.  End up with only generic code in this file.
+// TODO: Put the functions below in a more sensible place.  End up with only generic code in this file?
 void choose_pause();
-void choose_which_part_of_program_to_run();
+int choose_lights();
+enum PROGRAM choose_which_part_of_program_to_run();
+void prepare_to_run(enum PROGRAM program_part, int use_lights);
+
 void RUN_CREATE();
 void testing();
 
 int main() {
-    // Set up the robot for starting:
+    enum PROGRAM program_part;
+    int use_lights;
+
+    // Step 1: Set up the robot for starting:
     setup_create();  // Runs BEFORE hands-off
 
-    // Decide whether PAUSE should be ON or OFF:
+    // Step 2: Decide whether PAUSE should be ON or OFF:
     //  -- ON:  the program waits for the human to press the A button.
     //  -- OFF: the program runs without interruption.
     choose_pause();
 
-    // Do the light calibration:
-    // printf("Do the   wait_for_lights   steps...\n");
-    // wait_for_light(LIGHT_SENSOR);
-    printf("Ready for the run to start!\n");
-    pause();
+    // Step 3: Decide whether or not to use the lights to start the robot.
+    use_lights = choose_lights();
+    
+    // Step 4: Decide which program to run by using the A, B or C button:
+    program_part = choose_which_part_of_program_to_run();
+
+    // Step 5: Calibrate lights or otherwise prepare to run:
+    prepare_to_run(program_part, use_lights);
 
     // The rest happens when the lights come back on.
     printf("  Robot has STARTED!\n\n");
 
     RUN_CREATE();
     return 0;
-
-	// TODO: Fix the following or delete it.
-    // But for TUNING and PRACTICE runs use the following
-    // Select the program to run by using the A, B or C button:
-    //choose_which_part_of_program_to_run();
-    // return 0;
 }
 
 // Runs BEFORE hands-off.
 void setup_create()
 {
+    // Pause is always ON during setup, to ensure that all goes correctly.
     printf("Set up the robot for starting, BEFORE hands-off...\n");
-    turn_pause_on();  // No downside to pause being ON during setup.
-    
-    // Connect:
+    turn_pause_on();
+
+    // Connect to the Create robot, putting it in FULL mode.
     printf("Connecting ...\n");
     create_connect();
     create_full();
     printf("  Connected!\n\n");
-    
-    // Move servos to their starting positions:
-    printf("Moving the servos to their start positions...\n");
-    
-    // Arm servo:
+
+    // Move the ARM servo to its starting positions.
+    printf("Moving the ARM servo to its start position...\n");
     set_servo_position(0, PORT0_START);
     enable_servo(0);
     servo(0, STARTING_POSITION);  // Move here slowly, then relax (i.e., disable).
     printf("Disabling the arm servo so that it fits in the starting box...\n");
     disable_servo(0);
-    printf("  Arm servo is disabled.\n\n");
-    printf("Un-plug the arm servo, then GENTLY\n");
-    printf("  move the arm to fit below 12 inches.\n");
-    printf("  Plug the arm back in when you are done.\n\n");
+    printf("  Un-plug the arm servo, then GENTLY:\n");
+    printf("  -- Move the arm to fit below 12 inches.\n");
+    printf("  -- Plug the arm back in when you are done.\n\n");
     pause();
-    
-    // Not yet using the following ports, so commented out for now:
-    /*
-    set_servo_position(1, PORT1_START);
-    set_servo_position(2, PORT2_START);
-    set_servo_position(3, PORT3_START);
-    enable_servo(1);
-    enable_servo(2);
-    enable_servo(3);
-    */
-    
+
+    // Initialize the camera.
+    CAMERA_START();
+
+    // Turn pause back off (to be set as desired later in the starting-process).
     printf("  Setup (before HANDS-OFF) is DONE!\n\n");
     turn_pause_off();
 }
 
-void RUN_CREATE() {
-    //run_create1();
-    //run_create2();
-    enable_servo(0);
-    servo(0, MOVING_POSITION);
-   
-    // Move to Palm Tree #2.
-    create_forward(21, 30);
-    create_right(32, 28);  // was 35
-    create_forward(10.25, 30); // was 10
-    
-    // Scrape Dates from Palm Tree #1 into the Date Bin.
-    servo(0, PULLING_POSITION);
-    create_backward(3.5, 10);  // was 4
-    servo(0, MOVING_POSITION);  // Do a 2nd time just in case.
-    create_forward(3.5, 30);
-    servo(0, PULLING_POSITION);
-    create_backward(3.5, 10);
-    
-    // Move to Palm Tree #2.
-    servo(0, MOVING_POSITION);
-    create_forward(5, 30);
-    create_left(59, 30);
-    
-    // Scrape Dates from Palm Tree #2 into the Date Bin.
-    servo(0, PULLING_POSITION);
-    create_backward(5, 30);
-    servo(0, MOVING_POSITION);  // Do a 2nd time just in case.
-    create_forward(3, 30);
-    servo(0, PULLING_POSITION);
-    create_backward(5, 30);
-}
-
-void choose_pause()
-{
+// Runs AFTER  setup  but BEFORE hands-off.
+// Allows the user to choose whether PAUSE should be ON or OFF:
+//    -- ON:  the program waits for the human to press the A button.
+//    -- OFF: the program runs without interruption.
+void choose_pause() {
     int button;
 
     while (TRUE) {
@@ -145,32 +109,61 @@ void choose_pause()
     }
 }
 
-/*void choose_which_part_of_program_to_run()
-{
+// Runs AFTER  choose_pause  but BEFORE hands-off.
+// Allows the user to choose whether PAUSE should be ON or OFF:
+//    -- ON:  the program waits for the human to press the A button.
+//    -- OFF: the program runs without interruption.
+enum PROGRAM choose_which_part_of_program_to_run() {
+    return PROGRAM_DATES;
+    /*
     int button;
 
     button = get_button_press("Press:\n  B to run the Ring program.\n  C to run the yellow Crate program.\n   A to run everthing.\n");
     if (button == B_BUTTON) {
-        
-        
-        
-        
-        
-        
-        
-        +
-            \]'
-0        run_create1();
-/
+        run_create1();
     } else if (button == C_BUTTON) {
         run_create2();
     } else {
         RUN_CREATE();
+    }*/
+}
+
+// Runs AFTER  choose_pause  but BEFORE hands-off.
+// Allows the user to choose whether or not to use the lights for starting the robot.
+// Returns either TRUE (use the lights) or FALSE (do not choose the lights), per the user's choice.
+int choose_lights() {
+    int button;
+
+    while (TRUE) {
+        button = get_button_press(
+            "Press:\n  B to NOT use the lights\n  C to USE the lights.\n");
+        if (button == B_BUTTON) {
+            return FALSE;
+        } else if (button == C_BUTTON) {
+            return TRUE;
+        } else {
+            printf(" *** READ THE ABOVE. *** You must choose B or C.\n");
+        }
+    }
+}
+
+void prepare_to_run(enum PROGRAM program_part, int use_lights) {
+    printf("IMPORTANT: Check that the following is correct!\n");
+    printf("  Pause is:   %s.\n", get_pause_state());
+    printf("  Program is: DATES.\n");
+    
+    if (use_lights) {
+    	// Do the light calibration:
+    	printf("Do the   wait_for_lights   steps...\n");
+    	wait_for_light(LIGHT_SENSOR);
+    } else {
+        printf("Ready for the run to start!\n");
+        pause();
     }
 }
 
 void testing(){
-    printf("Initiating Tetsting Sequence...");
+    printf("Initiating Testing Sequence...");
     create_forward(21, 60);
     msleep(1000);
     servo(RING_ARM, 600);
@@ -256,5 +249,40 @@ void testing(){
     create_right(90, 60);
     msleep(1000);
     printf("Testing Sequence Complete.");
-}*/
+}
 
+void RUN_CREATE() {
+    // Put the ARM into the position for MOVING.
+    enable_servo(0);
+    servo(0, MOVING_POSITION);
+
+    // Move to Palm Tree #2.
+    create_forward(22.5, 30);  // was 21
+    create_right(37, 10);  // was 32
+    ROTATE_TO_X(PINKISH_ORANGE, 75);
+    create_forward(4.5, 30); // was 4.9
+    // ROTATE_TO_X(PINKISH_ORANGE, 75);
+    create_forward(5.1, 30);
+    pause();
+
+    // Scrape Dates from Palm Tree #2 into the Date Bin.
+    servo(0, PULLING_POSITION);
+    create_backward(6.0, 5);  // was 5.0
+    servo(0, MOVING_POSITION);  // Do a 2nd time just in case.
+    create_forward(6.0, 30);
+    servo(0, PULLING_POSITION);
+    create_backward(6.0, 5);
+
+    // Move to Palm Tree #1.
+    servo(0, MOVING_POSITION);
+    create_forward(5, 30);
+    create_left(59, 30);
+
+    // Scrape Dates from Palm Tree #1 into the Date Bin.
+    servo(0, PULLING_POSITION);
+    create_backward(5, 30);
+    servo(0, MOVING_POSITION);  // Do a 2nd time just in case.
+    create_forward(3, 30);
+    servo(0, PULLING_POSITION);
+    create_backward(5, 30);
+}

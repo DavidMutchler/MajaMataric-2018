@@ -1,10 +1,6 @@
 /*
-  Code for the CREATE robot in the SEEDING rounds
-  in the Greater St. Louis Regional tournament.
+  Code for the CREATE robot in 2018 Botball.  Final version for GCER.
   Contains the functions:
-    -- run_create1
-    -- run_create2
-    -- setup_create
 
   Authors include:  Ben G, Ben W, Caiden, Gavin, Elijah, Isaiah, Max, Ryland, and others.
   Date written: Spring, 2018.
@@ -108,27 +104,3 @@ void run_create1()
     
 }
 
-void spin_until_cube(int color)
-{
-    int count;
-    int area;
-
-    // Spin until the camera sees an object of the desired color.
-    create_spin_CW(30);
-    while(1==1)
-    {
-        camera_update();
-        count=get_object_count(color);
-        if(count==0)
-        {
-            continue;
-        }
-        area=get_object_area(color, 0);
-        // printf("area: %5d\n", area);
-        if(area > BIG_ENOUGH_TO_BE_CONSIDERED)
-        {
-            create_stop();
-            break;
-        }
-    }
-}
