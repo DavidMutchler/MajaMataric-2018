@@ -1,4 +1,4 @@
-//NEEDED COMMENT UP IN HERE!!!!
+// TODO: Put a comment here explaining what follows.
 
 #define PORT0_START 1432
 #define PORT1_START 100

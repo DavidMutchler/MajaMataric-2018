@@ -1,11 +1,48 @@
-//NEEDED COMMENT UP IN HERE!!!!
+/*
+  CONSTANTS for the LEGO robot:
+  Contains:
+  Authors include:  Ben G, Ben W, Blaize, Caiden, Elijah, Gavin,
+                    Ian, Isaiah, Max, Ryland, Sam, and others.
+  Date written:
+    -- Version 1: Spring, 2018.
+*/
 
-#define PORT0_START 1432
-#define PORT1_START 100
-#define PORT2_START 100
-#define PORT3_START 100
-
-#define LIGHT_SENSOR 0
+/*****************************************************************************************
+* The following constants tell the program what sensor readings
+* the program should treat as BLACK and what to treat as WHITE.
+*
+*   IMPORTANT: THESE  ** MUST **  BE TUNED AT THE TOURNAMENT.
+*      You MUST use the Sensor List menu on the Wallaby
+*      to come up with good values for these.  Here is what to do:
+*        1. Make sure that the robot is in its DOWN_FOR_MOVING position.
+*
+*        2. Put the robot so that the LEFT line sensor
+*           is INSIDE a black line, but just barely so.
+*        3. Using the Sensor List menu on the Wallaby,
+*           find out what the current reading is.
+*        4. Repeat the above at various places at the table until you
+*           know the approximate reading that the LEFT sensor gives
+*           when INSIDE a BLACK line (but just barely so).
+*
+*        5. Move the robot so that the LEFT line sensor is on a
+*           completely WHITE part of the table (NOT near a black line).
+*        6. Using the Sensor List menu on the Wallaby, find out
+*           what the current reading is (on the WHITE part of the table).
+*        7. Repeat the above at various places at the table until you
+*           know the approximate reading that the LEFT sensor gives
+*           when on a completely WHITE portion of the table.
+*
+*        8. Set the value for   LEFT_LINE_SENSOR_SEES_BLACK   below
+*           to some number that is:
+*             -- clearly LESS THAN the readings that you saw when
+*                the sensor was INSIDE a BLACK line (but just barely so), AND
+*             -- clearly GREATER THAN the readings that you saw when
+*                the sensor was on a completely WHITE portion of the table.
+*
+*        9. Repeat the above, but using the RIGHT line sensor, to determine
+*           and set the value for   RIGHT_LINE_SENSOR_SEES_BLACK   below.
+*      
+*****************************************************************************************/
 
 #define LEFT_LINE_SENSOR_SEES_BLACK   2500
 #define RIGHT_LINE_SENSOR_SEES_BLACK  2500
@@ -14,30 +51,16 @@
 * The following constants specify the power to use for various speeds.
 * You can change them if you HAVE to, but BE CAUTIOUS about doing so!
 *****************************************************************************************/
-#define SLOW        15
+#define SLOW        30  // was 15
 #define TURN_SPEED  30
 #define MEDIUM      50
 #define FAST       100
-#define PAUSE_TIME  1000  // Milliseconds to sleep at each PAUSE
+#define PAUSE_TIME 250  // Milliseconds to sleep at each PAUSE // was 500
 
 /*****************************************************************************************
 * The following constants specify the servo positions to use for the arm.
 * You can change them if you HAVE to, but BE CAUTIOUS about doing so!
 *****************************************************************************************/
-
-#define RING_ARM_DOWN 1610
-#define RING_ARM_UP_FULL 750
-#define RING_CLAW_OPEN 1700
-#define RING_CLAW_CLOSE 750
-#define RING_ARM_START 1510
-
-#define CUBE_ARM_BACK 100
-#define CUBE_ARM_UP 600
-#define CUBE_ARM_DOWN 2000
-#define CUBE_CLAW_CLOSE 1500
-#define CUBE_CLAW_OPEN 1200
-
-// The following are for the LEGO robot.
 
 #define UP                208  // This is straight up.  Used as the starting position.
 #define HALF_WAY_UP       750  // This is halfway up.
@@ -57,37 +80,17 @@
 *      that might have caused the robot to start veering.
 *****************************************************************************************/
 
+#define LEFT_SPEED_MULTIPLIER   1.00  // To correct veering
+#define RIGHT_SPEED_MULTIPLIER  0.98  // The robot veers a little to the right at FULL power.
+#define TICKS_PER_INCH        205.00
+#define TICKS_PER_DEGREE        9.83
+
 /*****************************************************************************************
 * The following constants tell the program what ports various wires
 * (motors, servos, and sensors) are plugged into.
 * Do NOT change these unless you change what a wire is plugged into.
 *****************************************************************************************/
 
-#define CUBE_ARM 0
-#define CUBE_CLAW 2
-#define RING_CLAW 1
-#define RING_ARM 3
-
-#define CREATE_LIGHT_SENSOR 5
-
-
-// I think that these two are no longer relevant.
-//#define CUBE_CLAW_CAPTURE_BIG 1679
-//#define CUBE_CLAW_CAPTURE SMALL 1784
-
-
-// Ignore these, they are for the Lego robot.
-//#define UP 100
-//#define DOWN 1440
-//#define ANGLE 1125
-//#define ARM 0
-
-//PORT 0 IS DEAD!!! I REPEAT PORT 0 IS DEAD PORT 2 IS DEAD
-
-// Not used yet:
-#define BIG_ENOUGH_TO_BE_CONSIDERED 80
-
-// Ignore these, they are for the Lego robot.
 #define ARM 0
 #define LEFT_MOTOR 3
 #define RIGHT_MOTOR 0
@@ -107,8 +110,3 @@
 #define A_BUTTON 1
 #define B_BUTTON 2
 #define C_BUTTON 3
-
-#define YELLOW 0
-#define RED 1
-#define GREEN 2
-#define BIG_YELLOW 3
