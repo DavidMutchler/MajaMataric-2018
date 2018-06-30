@@ -4,8 +4,7 @@
     -- forward
     -- backward
     -- left
-    -- right
-    -- test_movements
+    -- rightd
 
   Authors include:  Ben G, Ben W, Blaize, Caiden, Elijah, Gavin,
                     Ian, Isaiah, Max, Ryland, Sam, and others.
@@ -18,27 +17,22 @@
 #include "general_library.h"
 #include "lego_library.h"
 
-
+// Consider: BACKWARD could ** call ** FORWARD instead of duplicating its code.
+// Ditto RIGHT and LEFT.
 
 // Makes the robot go straight FORWARD for the given number of inches
 // at the given speed (1 to 100).
-void forward(float inches, int speed)
-{
+void forward(float inches, int speed) {
     int ticks_robot_needs_to_move, ticks_robot_has_moved;
-    int left_speed, right_speed;
 
     ticks_robot_needs_to_move = inches * TICKS_PER_INCH;
-    left_speed = speed * LEFT_SPEED_MULTIPLIER;
-    right_speed = speed * RIGHT_SPEED_MULTIPLIER;
-
     clear_motor_position_counter(LEFT_MOTOR);
     clear_motor_position_counter(RIGHT_MOTOR);
-    motor(LEFT_MOTOR, left_speed);
-    motor(RIGHT_MOTOR, right_speed);
-    while (TRUE)
-    {
+
+    start_forward(speed);
+    while (TRUE) {
         ticks_robot_has_moved = get_motor_position_counter(RIGHT_MOTOR);
-        if (ticks_robot_has_moved  >= ticks_robot_needs_to_move) {
+        if (ticks_robot_has_moved >= ticks_robot_needs_to_move) {
             freeze(LEFT_MOTOR);
             freeze(RIGHT_MOTOR);
             break;
@@ -56,23 +50,17 @@ void forward(float inches, int speed)
 
 // Makes the robot go straight BACKWARD for the given number of inches
 // at the given speed (1 to 100).
-void backward(float inches, int speed)
-{
+void backward(float inches, int speed) {
     int ticks_robot_needs_to_move, ticks_robot_has_moved;
-    int left_speed, right_speed;
 
     ticks_robot_needs_to_move = inches * TICKS_PER_INCH;
-    left_speed = speed * LEFT_SPEED_MULTIPLIER;
-    right_speed = speed * RIGHT_SPEED_MULTIPLIER;
-
     clear_motor_position_counter(LEFT_MOTOR);
     clear_motor_position_counter(RIGHT_MOTOR);
-    motor(LEFT_MOTOR, -left_speed);    // Negative to go BACKWARDS
-    motor(RIGHT_MOTOR, -right_speed);  // Negative to go BACKWARDS
-    while (TRUE)
-    {
+
+    start_backward(speed);
+    while (TRUE) {
         ticks_robot_has_moved = -get_motor_position_counter(RIGHT_MOTOR); // Negative because moving BACKWARDS
-        if (ticks_robot_has_moved  >= ticks_robot_needs_to_move) {
+        if (ticks_robot_has_moved >= ticks_robot_needs_to_move) {
             freeze(LEFT_MOTOR);
             freeze(RIGHT_MOTOR);
             break;
@@ -90,8 +78,7 @@ void backward(float inches, int speed)
 
 // Makes the robot turn RIGHT (clockwise) for the given number of degrees
 // at the given speed (1 to 100).
-void right(float degrees, int speed)
-{
+void right(float degrees, int speed) {
     int ticks_robot_needs_to_move, ticks_robot_has_moved;
     int left_speed, right_speed;
 
@@ -103,8 +90,7 @@ void right(float degrees, int speed)
     clear_motor_position_counter(RIGHT_MOTOR);
     motor(LEFT_MOTOR, left_speed);
     motor(RIGHT_MOTOR, -right_speed);  // Negative to go BACKWARDS
-    while (TRUE)
-    {
+    while (TRUE) {
         ticks_robot_has_moved = -get_motor_position_counter(RIGHT_MOTOR); // Negative because moving BACKWARDS
         if (ticks_robot_has_moved  >= ticks_robot_needs_to_move) {
             freeze(LEFT_MOTOR);
@@ -124,8 +110,7 @@ void right(float degrees, int speed)
 
 // Makes the robot turn LEFT (counterclockwise) for the given number of degrees
 // at the given speed (1 to 100).
-void left(float degrees, int speed)
-{
+void left(float degrees, int speed) {
     int ticks_robot_needs_to_move, ticks_robot_has_moved;
     int left_speed, right_speed;
 
@@ -137,8 +122,7 @@ void left(float degrees, int speed)
     clear_motor_position_counter(RIGHT_MOTOR);
     motor(LEFT_MOTOR, -left_speed);  // Negative to go BACKWARDS
     motor(RIGHT_MOTOR, right_speed);
-    while (TRUE)
-    {
+    while (TRUE) {
         ticks_robot_has_moved = get_motor_position_counter(RIGHT_MOTOR);
         if (ticks_robot_has_moved  >= ticks_robot_needs_to_move) {
             freeze(LEFT_MOTOR);
@@ -156,8 +140,39 @@ void left(float degrees, int speed)
     pause();
 }
 
-void test_movements()
-{
+// Makes the robot START moving straight FORWARD at the given speed (1 to 100).
+void start_forward(int speed) {
+    int left_speed, right_speed;
+
+    left_speed = speed * LEFT_SPEED_MULTIPLIER;
+    right_speed = speed * RIGHT_SPEED_MULTIPLIER;
+
+    motor(LEFT_MOTOR, left_speed);
+    motor(RIGHT_MOTOR, right_speed);
+}
+
+// Makes the robot START moving straight BACKWARD at the given speed (1 to 100).
+void start_backward(int speed) {
+    start_forward(-speed);
+}
+
+// Makes the robot START turning RIGHT (clockwise) at the given speed (1 to 100).
+void start_right(int speed) {
+    int left_speed, right_speed;
+
+    left_speed = speed * LEFT_SPEED_MULTIPLIER;
+    right_speed = speed * RIGHT_SPEED_MULTIPLIER;
+
+    motor(LEFT_MOTOR, left_speed);
+    motor(RIGHT_MOTOR, -right_speed);  // Negative to go BACKWARDS
+}
+
+// Makes the robot START turning LEFT (counterclockwise) at the given speed (1 to 100).
+void start_left(int speed) {
+    start_right(-speed);
+}
+
+void test_movements() {
     WAIT_FOR_A = TRUE;
     
     printf("\nTesting FORWARD  12.0 inches at full speed.\n");
@@ -187,8 +202,7 @@ void test_movements()
 }
 
 // Go forward at the given speed until either line sensor sees BLACK.
-void forward_until_black(int speed)
-{
+void forward_until_black(int speed) {
     int left_speed, right_speed;
     int left_sensor_reading, right_sensor_reading;
     
@@ -199,8 +213,7 @@ void forward_until_black(int speed)
     motor(RIGHT_MOTOR, right_speed);
     
     // Keep going until a line sensor sees BLACK.
-    while (TRUE)
-    {
+    while (TRUE) {
         left_sensor_reading = analog(LEFT_LINE_SENSOR);
         right_sensor_reading = analog(RIGHT_LINE_SENSOR);
         
