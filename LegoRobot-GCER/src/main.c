@@ -1,7 +1,5 @@
 /*
   Code for the LEGO robot in 2018 Botball.  Final version for GCER.
-  Attempts to be generic enough to include CREATE code too.
-
   Contains the MAIN function, which itself calls:
     -- before_lights_on
     -- after_lights_on

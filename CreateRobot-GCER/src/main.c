@@ -176,20 +176,18 @@ void RUN_CREATE(enum PROGRAM program) {
     servo(0, MOVING_POSITION);
 
     // Move to Palm Tree #2.
-    create_forward(26, 30);  // was 22.5
-    create_right(37, 10);  // was 32
-    ROTATE_TO_X(PINKISH_ORANGE, 80, 5);
-    create_forward(4.3, 30); // was 4.9
-    // ROTATE_TO_X(PINKISH_ORANGE, 75);
-    pause();
+    create_forward(27, 30);  // was 26
+    create_right(45, 10);  // was 37
+    ROTATE_TO_X(PINKISH_ORANGE, 78, 5);  // Was 80
+    create_forward(4.5, 30); // was 4.7
 
     // Scrape Dates from Palm Tree #2 into the Date Bin.
     servo(0, PULLING_POSITION);
     create_backward(5.0, 5);  // was 6.0
     servo(0, MOVING_POSITION);  // Do a 2nd time just in case.
-    create_forward(6.0, 30);
+    create_forward(5.0, 30);
     servo(0, PULLING_POSITION);
-    create_backward(6.0, 5);
+    create_backward(5.0, 5);
 
     // Move to Palm Tree #1.
     servo(0, MOVING_POSITION);

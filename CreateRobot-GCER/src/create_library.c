@@ -165,7 +165,7 @@ void spin_until_cube(int color) {
 // that the camera sees is within DELTA_X of the given desired_x value.
 void ROTATE_TO_X(int color, int desired_x, float rotate_seconds) {
     //CW = Clockwise = Create_right, CCW = Counter clockwise = Create_left
-    int count, x, LOW, HIGH, PROG_START, diff;
+    int count, x, LOW, HIGH, PROG_START, pixel_diff;
     time_t seconds;
     time_t seconds_2;
 
@@ -175,15 +175,16 @@ void ROTATE_TO_X(int color, int desired_x, float rotate_seconds) {
     seconds = time(NULL);
 
     while (TRUE) {
+        // Quit if it has been trying too long.
         seconds_2 = time(NULL);
-        
         PROG_START = seconds_2 - seconds;
-        
         if (PROG_START > rotate_seconds) {
             //Does "seconds_2" - "seconds" equal greater than r_s?
             printf("Camera has exceded searching time limit.\n");
             break;
         }
+        
+        // Take a picture and rotate appropriately.
         camera_update();
         PRINT_BLOB(color);
         count=get_object_count(color);
@@ -202,16 +203,28 @@ void ROTATE_TO_X(int color, int desired_x, float rotate_seconds) {
             create_spin_CW(MINIMUM_CW_SPEED);
         }
     }
+    
+    // The rest adjusts for overshoot.
+    
+    msleep(0.25);  // Let the robot come to rest.
     camera_update();
-    PRINT_BLOB(color);
-    if (x < desired_x) {
-        diff = (desired_x - x) / 2;
-        create_right(diff, 30);
+    x = get_object_center(color, 0).x;
+    printf("Final spot is: %3d and desired is: %3d\n", desired_x);
+
+    if (x < desired_x - L_DELTA) {
+        pixel_diff = desired_x - x;
+        create_left(pixel_diff * DEGREES_PER_PIXEL, MINIMUM_CCW_SPEED);
     }
     else if (x > desired_x) {
-        diff = (x - desired_x) / 2;
-        create_left(diff, 30);
+        pixel_diff = (x - desired_x) / 2;
+        create_right(pixel_diff  * DEGREES_PER_PIXEL, MINIMUM_CW_SPEED);
     }
+    
+    msleep(0.25);  // Let the robot come to rest.
+    camera_update();
+    x = get_object_center(color, 0).x;
+    printf("Final spot after adjustment is: %3d\n", x);
+    
     pause();
 }
 
