@@ -27,7 +27,7 @@ void create_backward(float inches, int speed);
 void create_left(float degrees, int speed);
 void create_right(float degrees, int speed);
 
-void ROTATE_TO_X(int color, int desired_x);
+void ROTATE_TO_X(int color, int desired_x, float rotate_seconds);
 void PRINT_BLOB(int color);
 void CAMERA_START();
 void CAMERA_TESTING();

@@ -14,6 +14,12 @@
 
 #include <kipr/botball.h>
 
+enum PROGRAM before_hands_off();
+void setup_create();
+void choose_pause();
+enum BOOLEAN choose_lights();
+enum PROGRAM choose_which_part_of_program_to_run();
+void prepare_to_run(enum PROGRAM program, enum BOOLEAN use_lights);
 
 extern int WAIT_FOR_A;
 extern int MILLISECONDS_TO_PAUSE;

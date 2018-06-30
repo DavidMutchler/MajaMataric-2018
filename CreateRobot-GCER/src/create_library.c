@@ -14,12 +14,13 @@
 */
 
 #include <kipr/botball.h>
+#include <time.h>
 #include "constants.h"
 #include "general_library.h"
 #include "create_library.h"
 
 float MILLIMETERS_PER_INCH = 25.4;
-float LEFT_SPEED_MULTIPLIER_FOR_CREATE = 1.0;  // To correct veering
+float LEFT_SPEED_MULTIPLIER_FOR_CREATE = 0.96;  // To correct veering
 float RIGHT_SPEED_MULTIPLIER_FOR_CREATE = 1.0;  // To correct veering
 float POWER_MULTIPLIER = 5.0;  // 100% power -> 500 mm / second (max speed)
 
@@ -162,14 +163,27 @@ void spin_until_cube(int color) {
 
 // Rotate the robot until the center of the biggest blob of the given color
 // that the camera sees is within DELTA_X of the given desired_x value.
-void ROTATE_TO_X(int color, int desired_x) {
+void ROTATE_TO_X(int color, int desired_x, float rotate_seconds) {
     //CW = Clockwise = Create_right, CCW = Counter clockwise = Create_left
-    int count, x, LOW, HIGH;
+    int count, x, LOW, HIGH, PROG_START, diff;
+    time_t seconds;
+    time_t seconds_2;
 
     LOW = desired_x - L_DELTA;
     HIGH = desired_x + H_DELTA;
+    
+    seconds = time(NULL);
 
     while (TRUE) {
+        seconds_2 = time(NULL);
+        
+        PROG_START = seconds_2 - seconds;
+        
+        if (PROG_START > rotate_seconds) {
+            //Does "seconds_2" - "seconds" equal greater than r_s?
+            printf("Camera has exceded searching time limit.\n");
+            break;
+        }
         camera_update();
         PRINT_BLOB(color);
         count=get_object_count(color);
@@ -188,6 +202,17 @@ void ROTATE_TO_X(int color, int desired_x) {
             create_spin_CW(MINIMUM_CW_SPEED);
         }
     }
+    camera_update();
+    PRINT_BLOB(color);
+    if (x < desired_x) {
+        diff = (desired_x - x) / 2;
+        create_right(diff, 30);
+    }
+    else if (x > desired_x) {
+        diff = (x - desired_x) / 2;
+        create_left(diff, 30);
+    }
+    pause();
 }
 
 // Print the x, y and size of the biggest blob of the given color that
@@ -303,6 +328,6 @@ void CAMERA_START() {
 
 void CAMERA_TESTING() {
     CAMERA_START();
-    ROTATE_TO_X(GREEN, 80);
+    ROTATE_TO_X(GREEN, 80, 3);
     camera_close();
 }

@@ -16,6 +16,7 @@
 
 enum ACTION  {ACTION_STOP, ACTION_CONTINUE, ACTION_LEFT, ACTION_RIGHT, ACTION_FORWARD, ACTION_BACKWARD};
 enum PROGRAM {PROGRAM_DATES, PROGRAM_CRATES};
+enum BOOLEAN {TRUE = 1, FALSE = 0};
 
 #define MINIMUM_CW_SPEED 11
 #define MINIMUM_CCW_SPEED 11
@@ -113,9 +114,6 @@ enum PROGRAM {PROGRAM_DATES, PROGRAM_CRATES};
 * DO NOT CHANGE ANY OF THE FOLLOWING.
 * They are needed for various helper functions.
 *****************************************************************************************/
-
-#define TRUE 1
-#define FALSE 0
 
 #define A_BUTTON 1
 #define B_BUTTON 2
