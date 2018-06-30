@@ -172,89 +172,55 @@ void start_left(int speed) {
     start_right(-speed);
 }
 
-void test_movements() {
-    WAIT_FOR_A = TRUE;
-    
-    printf("\nTesting FORWARD  12.0 inches at full speed.\n");
-    forward(12.0, 100);
-    printf("\nTesting BACKWARD 12.0 inches at full speed.\n");
-    backward(12.0, 100);
-    
-    printf("\nTesting FORWARD   6.0 inches at full speed.\n");
-    forward(6.0, 100);
-    printf("\nTesting BACKWARD  6.0 inches at full speed.\n");
-    backward(6.0, 100);
-    
-    printf("\nTesting FORWARD   3.0 inches at full speed.\n");
-    forward(3.0, 100);
-    printf("\nTesting BACKWARD  3.0 inches at full speed.\n");
-    backward(3.0, 100);
-    
-    printf("\nTesting FORWARD  24.0 inches at full speed.\n");
-    forward(24.0, 100);
-    printf("\nTesting BACKWARD 24.0 inches at full speed.\n");
-    backward(24.0, 100);
-    
-    printf("\nTesting FORWARD  36.0 inches at full speed.\n");
-    forward(36.0, 100);
-    printf("\nTesting BACKWARD 36.0 inches at full speed.\n");
-    backward(36.0, 100);
-}
-
 // Go forward at the given speed until either line sensor sees BLACK.
 void forward_until_black(int speed) {
-    int left_speed, right_speed;
     int left_sensor_reading, right_sensor_reading;
-    
-    // Adjust speed for possible veer, then turn on the motors:
-	left_speed = speed * LEFT_SPEED_MULTIPLIER;
-    right_speed = speed * RIGHT_SPEED_MULTIPLIER;
-    motor(LEFT_MOTOR, left_speed);
-    motor(RIGHT_MOTOR, right_speed);
-    
-    // Keep going until a line sensor sees BLACK.
+
+    start_forward(speed);
     while (TRUE) {
         left_sensor_reading = analog(LEFT_LINE_SENSOR);
         right_sensor_reading = analog(RIGHT_LINE_SENSOR);
-        
-        if (left_sensor_reading >= LEFT_LINE_SENSOR_SEES_BLACK || right_sensor_reading >= RIGHT_LINE_SENSOR_SEES_BLACK)
-        {
-            ao();
+
+        if (left_sensor_reading >= LEFT_LINE_SENSOR_SEES_BLACK || right_sensor_reading >= RIGHT_LINE_SENSOR_SEES_BLACK) {
+            freeze(LEFT_MOTOR);
+            freeze(RIGHT_MOTOR);
             break;
         }
-        msleep(10);//was 20
+
+        msleep(10);
 	}
 }
 
 // Go forward at the given speed following a black line for a given distance.
-void forward_on_line(int speed,float inches)
-{
-    int ticks_robot_needs_to_move, ticks_robot_has_moved;
-	int left_speed, right_speed;
-    int left_sensor_reading, right_sensor_reading;
-    
-    // Adjust speed for possible veer, then turn on the motors:
-    ticks_robot_needs_to_move = inches * TICKS_PER_INCH;
-    left_speed = speed * LEFT_SPEED_MULTIPLIER;
-    right_speed = speed * RIGHT_SPEED_MULTIPLIER;
-    motor(LEFT_MOTOR, left_speed);
-    motor(RIGHT_MOTOR, right_speed);
-    
-    // Keep following a line sensor until inches is reached.
-    while (TRUE)
-    {
-        left_sensor_reading = analog(LEFT_LINE_SENSOR);
-        right_sensor_reading = analog(RIGHT_LINE_SENSOR);
-        ticks_robot_has_moved = get_motor_position_counter(RIGHT_MOTOR);
-    //
-    // CHANGE TO FOLLOW LINE INSTEAD OF STOP AT BLACK
-    //
-        if (left_sensor_reading >= LEFT_LINE_SENSOR_SEES_BLACK || right_sensor_reading >= RIGHT_LINE_SENSOR_SEES_BLACK || ticks_robot_has_moved  >= ticks_robot_needs_to_move)
-        {
-            ao();
-            break;
-        }
+void forward_on_line(int speed,float inches) {
+// TODO: Implement this function.
+}
 
-        msleep(10);//was 20
-	}
+void test_movements() {
+    WAIT_FOR_A = TRUE;
+
+    printf("\nTesting FORWARD  12.0 inches at full speed.\n");
+    forward(12.0, 100);
+    printf("\nTesting BACKWARD 12.0 inches at full speed.\n");
+    backward(12.0, 100);
+
+    printf("\nTesting FORWARD   6.0 inches at full speed.\n");
+    forward(6.0, 100);
+    printf("\nTesting BACKWARD  6.0 inches at full speed.\n");
+    backward(6.0, 100);
+
+    printf("\nTesting FORWARD   3.0 inches at full speed.\n");
+    forward(3.0, 100);
+    printf("\nTesting BACKWARD  3.0 inches at full speed.\n");
+    backward(3.0, 100);
+
+    printf("\nTesting FORWARD  24.0 inches at full speed.\n");
+    forward(24.0, 100);
+    printf("\nTesting BACKWARD 24.0 inches at full speed.\n");
+    backward(24.0, 100);
+
+    printf("\nTesting FORWARD  36.0 inches at full speed.\n");
+    forward(36.0, 100);
+    printf("\nTesting BACKWARD 36.0 inches at full speed.\n");
+    backward(36.0, 100);
 }
